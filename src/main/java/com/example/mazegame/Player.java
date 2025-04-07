@@ -66,21 +66,13 @@ public class Player {
 //                player.setY(playerRow * TILE_SIZE + TILE_SIZE / 2);
             player.setX(playerCol * TILE_SIZE + (TILE_SIZE - player.getFitWidth()) / 2);
             player.setY(playerRow * TILE_SIZE + (TILE_SIZE - player.getFitHeight()) / 2);
-            for (Collectible collectible : collectibles) {
-                if (collectible.getRow() == playerRow && collectible.getCol() == playerCol) {
-                    // Collect the item
-                    collectible.collect();
-                    score += 0.5;  // Increase score (you can change this value)
-                    //System.out.println("Score: " + score);
-                }
-
-            }
             for (Iterator<Collectible> it = collectibles.iterator(); it.hasNext(); ) {
                 Collectible c = it.next();
                 if (c.getRow() == playerRow && c.getCol() == playerCol) {
                     it.remove();  // Remove collectible
                     root.getChildren().remove(c);
-                    score++;  // Increase score
+                    score+=c.getValue();  // Increase score
+                    c.collect();
                     scoreText.setText("Score: " + score);
                     MazeGame.increaseTime(5);//  update score text
                 }

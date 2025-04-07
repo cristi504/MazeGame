@@ -25,7 +25,7 @@ public class MazeGame extends Application {
 
     private int score = 0;
     private static Stage mazeStage;
-    private static int timeLeft = 30;  // Initial time (30 seconds)
+    private static int timeLeft = 20;  // Initial time (20 seconds)
     private static Text timerText; // Display timer
     private static Timeline timer;
     // Scorul initial
@@ -70,7 +70,7 @@ public class MazeGame extends Application {
         System.out.println("Opening maze window...");
         mazeStage = new Stage();
         Pane root = new Pane();
-       // MazeLayout.MAZE_LAYOUT_LEVEL_1 = MazeGenerator.generateMaze();
+        MazeLayout.MAZE_LAYOUT_LEVEL_1 = MazeGenerator.generateMaze();
         System.out.println("Maze generated!");
         MazeLayout.drawMaze(root);
         System.out.println("Maze draw function called!");
@@ -94,26 +94,49 @@ public class MazeGame extends Application {
         Random rand = new Random();
         Set<String> usedPositions = new HashSet<>();
 
-        for (int i = 0; i < 20; i++) {  // Adăugăm 5 obiecte colectabile
+        // Prevent collectibles from spawning on top of the player or door
+        int playerStartRow = 1;
+        int playerStartCol = 1;
+        usedPositions.add(playerStartRow + "," + playerStartCol);
+
+        int doorRow = MazeLayout.ROWS - 2;
+        int doorCol = MazeLayout.COLUMNS - 2;
+        usedPositions.add(doorRow + "," + doorCol);
+
+        // Optionally avoid placing collectible near the door path cells too:
+        usedPositions.add((doorRow - 1) + "," + doorCol);
+        usedPositions.add(doorRow + "," + (doorCol - 1));
+
+        // Generate collectibles
+        for (int i = 0; i < 20; i++) {
             int row, col;
             do {
-                row = rand.nextInt(MazeLayout.ROWS);  // Rând aleatoriu
-                col = rand.nextInt(MazeLayout.COLUMNS);  // Coloană aleatorie
-            } while (MazeLayout.MAZE_LAYOUT_LEVEL_1[row][col] == 1 ||  usedPositions.contains(row + "," + col));
-            usedPositions.add(row + "," + col); // Verificăm că nu e perete
+                row = rand.nextInt(MazeLayout.ROWS);
+                col = rand.nextInt(MazeLayout.COLUMNS);
+            } while (
+                    MazeLayout.MAZE_LAYOUT_LEVEL_1[row][col] == 1 ||
+                            usedPositions.contains(row + "," + col)
+            );
+
+            usedPositions.add(row + "," + col);
+
             String[] images = {
                     "D:/java/MazeGame/photos/gem.png",
                     "D:/java/MazeGame/photos/pink_gem.png",
                     "D:/java/MazeGame/photos/coin.png"
             };
-            String randomImage = images[rand.nextInt(images.length)]; // Alege una la întâmplare
-            collectibles.add(new Collectible(root, row, col, randomImage));
-
-         //   collectibles.add(new Collectible(root, row, col,"C:/Users/krist/Downloads/MazeGame/coin.png"));
+            Map<String, Integer> collectibleValues = new HashMap<>();
+            collectibleValues.put("D:/java/MazeGame/photos/coin.png", 1);
+            collectibleValues.put("D:/java/MazeGame/photos/gem.png", 3);
+            collectibleValues.put("D:/java/MazeGame/photos/pink_gem.png", 5);
+            String randomImage = images[rand.nextInt(images.length)];
+            int value = collectibleValues.getOrDefault(randomImage, 1);
+            collectibles.add(new Collectible(root, row, col, randomImage, value));
         }
 
+
         // Creăm scena cu labirintul
-        Scene mazeScene = new Scene(root, 1200, 800);
+        Scene mazeScene = new Scene(root, 1230, 830);
         mazeStage.setTitle("Maze Game");
         mazeStage.setScene(mazeScene);
         mazeStage.show();
