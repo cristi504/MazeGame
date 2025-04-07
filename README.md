@@ -1,4 +1,4 @@
-Overview
+
 MazeGame is a simple yet engaging JavaFX-based game where the player navigates through a randomly generated maze, collects items (coins and diamonds) to increase their score, and reaches the exit door to complete the game. The maze is generated using a recursive backtracking algorithm, ensuring a unique layout for every playthrough.
 
 Random Maze Generation : A new maze is generated for each game session using a recursive backtracking algorithm.
